@@ -1,7 +1,8 @@
 const Blog = require("../models/Blog");
+const User = require("../models/User");
 
-const cleanDB = async () => {
-  await Blog.remove({});
+const cleanBlogs = async () => {
+  await Blog.deleteMany({});
 };
 const initialBlogs = [
   {
@@ -21,11 +22,34 @@ const initialBlogs = [
   },
 ];
 
-const initDB = async () => {
-  for (let blog of initialBlogs) {
-    let addBlog = new Blog(blog);
-    await addBlog.save();
-  }
-};
+async function initBlogs() {
+  await Blog.insertMany(initialBlogs);
+}
 
-module.exports = { cleanDB, initialBlogs, initDB };
+async function cleanUsers() {
+  await User.deleteMany({});
+}
+
+const initialUsers = [
+  {
+    username: "admin",
+    passwordHash: "admin",
+  },
+  {
+    username: "mod",
+    passwordHash: "mod",
+  },
+];
+
+async function initUsers() {
+  await User.insertMany(initialUsers);
+}
+
+module.exports = {
+  cleanBlogs,
+  initialBlogs,
+  initBlogs,
+  cleanUsers,
+  initialUsers,
+  initUsers,
+};

@@ -1,4 +1,4 @@
-const supertest = require("supertest");
+/* const supertest = require("supertest");
 const mongoose = require("mongoose");
 const app = require("../app");
 const api = supertest(app);
@@ -8,9 +8,10 @@ const Blog = require("../models/Blog");
 
 describe("getting blogs from db", () => {
   beforeEach(async () => {
-    await helper.cleanDB();
-    await helper.initDB();
+    await helper.cleanBlogs();
+    await helper.initBlogs();
   });
+
   test("getting all thorugh api", async () => {
     const response = await api.get("/api/blogs").expect(200);
     expect(response.body).toHaveLength(helper.initialBlogs.length);
@@ -38,9 +39,10 @@ describe("getting blogs from db", () => {
 });
 
 describe("adding new posts", () => {
-  beforeEach(async () => {
-    await helper.cleanDB();
-    await helper.initDB();
+  beforeEach(async (done) => {
+    await helper.cleanBlogs();
+    await helper.initBlogs();
+    done();
   });
 
   test("succeds with valid data", async () => {
@@ -50,16 +52,15 @@ describe("adding new posts", () => {
       author: "hello caramelo de chocolate",
     };
     await api.post("/api/blogs").send(newBlog).expect(201);
-
-    const blogs = await Blog.find({});
+    const blogs = await Blog.find({}).exec();
     expect(blogs).toHaveLength(helper.initialBlogs.length + 1);
   });
 });
 
 describe("adding invalid posts", () => {
   beforeEach(async () => {
-    await helper.cleanDB();
-    await helper.initDB();
+    await helper.cleanBlogs();
+    await helper.initBlogs();
   });
 
   test("title, body, or author missing", async () => {
@@ -88,8 +89,8 @@ describe("adding invalid posts", () => {
 
 describe("deleting a blog", () => {
   beforeEach(async () => {
-    await helper.cleanDB();
-    await helper.initDB();
+    await helper.cleanBlogs();
+    await helper.initBlogs();
   });
 
   test("with valid id", async () => {
@@ -108,3 +109,4 @@ describe("deleting a blog", () => {
     await api.delete(`/api/blogs/${id}`).expect(404);
   });
 });
+ */
