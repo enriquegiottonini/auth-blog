@@ -40,4 +40,58 @@ blogsRouter.get("/", async (req, res) => {
   }
 });
 
+blogsRouter.get("/:id", async (req, res) => {
+  try {
+    const id = req.params.id.trim();
+    if (id.length !== 24) {
+      res.status(400).send({
+        error: `${id} must be a 24 hex characters string.`,
+      });
+      return;
+    }
+    const blog = await Blog.findById(id);
+    if (!blog) {
+      res.status(404).send({
+        error: "not found",
+      });
+      return;
+    }
+
+    res.status(200).json(blog);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({
+      message: err,
+    });
+  }
+});
+
+blogsRouter.delete("/:id", async (req, res) => {
+  try {
+    const id = req.params.id.trim();
+    if (id.length !== 24) {
+      res.status(400).send({
+        error: `${id} must be a 24 hex characters string.`,
+      });
+      return;
+    }
+    const blog = await Blog.findByIdAndRemove(id);
+    if (!blog) {
+      res.status(404).send({
+        error: "not found",
+      });
+      return;
+    }
+
+    res.status(200).send({
+      message: "deleted",
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({
+      message: err,
+    });
+  }
+});
+
 module.exports = blogsRouter;
