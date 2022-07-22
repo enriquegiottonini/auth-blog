@@ -49,7 +49,7 @@ usersRouter.post("/", async (req, res) => {
       return;
     }
 
-    const exists = User.findOne({ username: username });
+    const exists = await User.findOne({ username: username }).exec();
     if (exists) {
       res.status(400).send({
         error: "user already exists.",

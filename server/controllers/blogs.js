@@ -2,14 +2,25 @@ const blogsRouter = require("express").Router();
 const Blog = require("../models/Blog");
 const User = require("../models/User");
 
+const jwt = require("jsonwebtoken");
+const getTokenFrom = (request) => {
+  const auth = request.get("authorization");
+  if (auth && auth.toLowerCase().startsWith("bearer ")) {
+    return auth.substring(7);
+  }
+  return null;
+};
+
 blogsRouter.post("/", async (req, res) => {
   try {
-    // Filters
-    const { title, body, author } = req.body;
-    if (!author) {
-      res.status(400).send({ error: "Id author is needed" });
+    const token = getTokenFrom(req);
+
+    if (!token) {
+      res.status(401).send({ error: "tauth needed, bearer missing" });
       return;
     }
+    const decodedToken = jwt.verify(token, process.env.SECRET);
+    const author = decodedToken.id;
 
     if (author.length !== 24) {
       res.status(500).send({
@@ -17,8 +28,10 @@ blogsRouter.post("/", async (req, res) => {
       });
       return;
     }
+    // Filters
+    const { title, body } = req.body;
 
-    const exists = await User.findById(author);
+    const exists = await User.findById(author).exec();
     if (!exists) {
       res.status(404).send({ error: "id not found." });
       return;
@@ -33,7 +46,7 @@ blogsRouter.post("/", async (req, res) => {
       date: new Date(),
       title: title,
       body: body,
-      author: author,
+      author: exists.username,
     });
 
     const savedBlog = await blog.save();
@@ -96,13 +109,30 @@ blogsRouter.delete("/:id", async (req, res) => {
       });
       return;
     }
-    const blog = await Blog.findByIdAndRemove(id);
+    const blog = await Blog.findById(id);
     if (!blog) {
       res.status(404).send({
         error: "not found",
       });
       return;
     }
+
+    // Authorization
+    const token = getTokenFrom(req);
+    if (!token) {
+      res.status(401).send({ error: "auth needed, bearer missing" });
+      return;
+    }
+    const decodedToken = jwt.verify(token, process.env.SECRET);
+    const author = decodedToken.id;
+
+    if (!(author !== blog.id)) {
+      return res.status(401).json({
+        error: "unauthorized",
+      });
+    }
+
+    await blog.remove();
 
     res.status(200).send({
       message: "deleted",
