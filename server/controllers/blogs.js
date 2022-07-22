@@ -1,13 +1,31 @@
 const blogsRouter = require("express").Router();
 const Blog = require("../models/Blog");
+const User = require("../models/User");
 
 blogsRouter.post("/", async (req, res) => {
   try {
     // Filters
     const { title, body, author } = req.body;
+    if (!author) {
+      res.status(400).send({ error: "Id author is needed" });
+      return;
+    }
 
-    if (!(title && body && author)) {
-      res.status(400).send({ error: "Title, body and author are needed" });
+    if (author.length !== 24) {
+      res.status(500).send({
+        error: `${author} must be a 24 hex characters string.`,
+      });
+      return;
+    }
+
+    const exists = await User.findById(author);
+    if (!exists) {
+      res.status(404).send({ error: "id not found." });
+      return;
+    }
+
+    if (!(title && body)) {
+      res.status(400).send({ error: "Title and body are needed" });
       return;
     }
 
@@ -19,6 +37,9 @@ blogsRouter.post("/", async (req, res) => {
     });
 
     const savedBlog = await blog.save();
+
+    exists.blogs = exists.blogs.concat(savedBlog.id);
+    await exists.save();
     res.status(201).json(savedBlog);
   } catch (err) {
     console.error(err);
