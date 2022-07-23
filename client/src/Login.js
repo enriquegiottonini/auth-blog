@@ -12,6 +12,8 @@ const Login = (props) => {
         username,
         password,
       });
+
+      window.localStorage.setItem("loggedUser", JSON.stringify(user));
       props.setUser(user);
     } catch (exception) {
       alert("Wrong credentials");
