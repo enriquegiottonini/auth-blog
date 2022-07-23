@@ -3,6 +3,7 @@ import "./styles/App.css";
 import Login from "./Login";
 import loginService from "./services/login";
 import blogService from "./services/blogs";
+import { ToastContainer } from "react-toastify";
 
 import { useState } from "react";
 import { useEffect } from "react";
@@ -10,6 +11,7 @@ import BlogList from "./BlogList";
 
 import axios from "axios";
 import BlogForm from "./BlogForm";
+import Togglable from "./Toggable";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -49,7 +51,10 @@ const App = () => {
             logout
           </button>
         </div>
-        <BlogForm blogs={blogs} setBlogs={setBlogs} />
+        <Togglable buttonLabel="new blogs">
+          {" "}
+          <BlogForm blogs={blogs} setBlogs={setBlogs} />
+        </Togglable>
       </div>
     ) : (
       <Login user={user} setUser={setUser} />
@@ -58,10 +63,23 @@ const App = () => {
   return (
     <div>
       <h1 className="heading__one">React application!!</h1>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       {loginForm()}
 
       <div>
-        <BlogList blogs={blogs} />
+        <Togglable buttonLabel={"show blogs"}>
+          <BlogList blogs={blogs.reverse()} />
+        </Togglable>
       </div>
     </div>
   );

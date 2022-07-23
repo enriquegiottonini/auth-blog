@@ -10,7 +10,7 @@ const Blog = ({ blog }) => {
         <b>{date}</b> - {author}
       </p>
       <h1>{title}</h1>
-      <p>{body}</p>
+      {body}
     </div>
   );
 };
@@ -19,7 +19,6 @@ const BlogList = ({ blogs }) => {
   if (!blogs) {
     return <p>Loading ...</p>;
   } else {
-    blogs.reverse();
     return (
       <div>
         {blogs.map((blog) => {

@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import loginService from "./services/login";
 import blogService from "./services/blogs";
+import { toast } from "react-toastify";
 
 const Login = (props) => {
   const [username, setUsername] = useState("");
@@ -18,7 +19,7 @@ const Login = (props) => {
       blogService.setToken(user.token);
       props.setUser(user);
     } catch (exception) {
-      alert("Wrong credentials");
+      toast("Invalid Username or Password.");
       console.error(exception);
     }
   };

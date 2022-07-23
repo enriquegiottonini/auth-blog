@@ -1,6 +1,11 @@
 import React from "react";
 import axios from "axios";
 import blogService from "./services/blogs";
+import { ToastContainer, toast } from "react-toastify";
+
+import "react-toastify/dist/ReactToastify.css";
+// minified version is also included
+// import 'react-toastify/dist/ReactToastify.min.css';
 
 import { useState } from "react";
 
@@ -23,6 +28,15 @@ const BlogForm = ({ blogs, setBlogs }) => {
       }
     } catch (error) {
       console.error(error);
+      toast("please log in again.", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     }
 
     setTitle("");
