@@ -1,6 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import loginService from "./services/login";
+import blogService from "./services/blogs";
 
 const Login = (props) => {
   const [username, setUsername] = useState("");
@@ -14,6 +15,7 @@ const Login = (props) => {
       });
 
       window.localStorage.setItem("loggedUser", JSON.stringify(user));
+      blogService.setToken(user.token);
       props.setUser(user);
     } catch (exception) {
       alert("Wrong credentials");
